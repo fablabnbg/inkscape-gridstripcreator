@@ -1,2 +1,2 @@
 # inkscape-gridstripcreator
-Creates grid strip for the qlocktwo 
+Creates grid strips for the qlocktwo 
