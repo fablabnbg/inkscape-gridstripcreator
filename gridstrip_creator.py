@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 '''
 Grid Strip Creator  v1.0 (30/11/2014)
 
@@ -26,27 +26,16 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 # see also http://codespeak.net/lxml/dev/tutorial.html#namespaces for XML namespaces manipulation
  
 
-# # # extension's begining # # #
-
-# These two lines are only needed if you don't put the script directly into
-# the installation directory
-import simplestyle,sys
-sys.path.append('/usr/share/inkscape/extensions')
-
-# We will use the inkex module with the predefined Effect base class.
+# These two lines are only needed if you don't put the script directly into the installation directory
 import inkex
-
 from xml.etree import ElementTree as ET
 from lxml import etree
-
-# for printing debugging output
 import gettext
 _ = gettext.gettext
 
 def printDebug(string):
 	inkex.errormsg(_(string))
 	
-
 class GridStrip_Creator(inkex.Effect):
 	def __init__(self):
 		inkex.Effect.__init__(self)
@@ -57,98 +46,21 @@ class GridStrip_Creator(inkex.Effect):
 		# Call the base class constructor.
 		inkex.Effect.__init__(self)
 
-		# Define string option "--length" with default value '0.0'.
-		self.arg_parser.add_argument('--length',
-			action = 'store',type = float,
-			dest = 'length',default = 230.0,
-			help = 'Length of strip')
-			
-		# Define string option "--width" with default value '0.0'.
-		self.arg_parser.add_argument('--width',
-			action = 'store',type = float,
-			dest = 'width',default = 20.0,
-			help = 'Width of strip')
+		self.arg_parser.add_argument('--length', type = float, default = 230.0, help = 'Length of strip')
+		self.arg_parser.add_argument('--width', type = float, default = 20.0, help = 'Width of strip')
+		self.arg_parser.add_argument('--cellheight', type = float, default = 12.5, help = 'height of cell')
+		self.arg_parser.add_argument('--cellwidth', type = float, default = 12.5, help = 'Width of cell')
+		self.arg_parser.add_argument('--scalecells', type = inkex.Boolean, default = False, help = 'Scale cells over length')
+		self.arg_parser.add_argument('--cellnumx', type = int, default = 11, help = 'Number of cells x')
+		self.arg_parser.add_argument('--cellnumy', type = int, default = 10, help = 'Number of cells y')
+		self.arg_parser.add_argument('--notchdepth', type = float, default = 1.0, help = 'Depth of notch')
+		self.arg_parser.add_argument('--notchwidth', type = float, default = 10.0, help = 'Width of notch')
+		self.arg_parser.add_argument('--notchhorizontal', type = inkex.Boolean, default = False, help = 'Make notches on horizontal strip')
+		self.arg_parser.add_argument('--notchvertical', type = inkex.Boolean, default = False, help = 'Make notches on vertical strip')
+		self.arg_parser.add_argument('--notch2width', type = float, default = 3.0, help = 'Width of notch')
+		self.arg_parser.add_argument('--notchxcorner', type = inkex.Boolean, default = False, help = 'Make notches on corner of horizontal strip')
+		self.arg_parser.add_argument('--notchycorner', type = inkex.Boolean, default = False, help = 'Make notches on corner of vertical strip')
 
-		# Define string option "--cellheight" with default value '0.0'.
-		self.arg_parser.add_argument('--cellheight',
-			action = 'store',type = float,
-			dest = 'cellheight',default = 12.5,
-			help = 'height of cell')
-			
-		# Define string option "--cellwidth" with default value '0.0'.
-		self.arg_parser.add_argument('--cellwidth',
-			action = 'store',type = float,
-			dest = 'cellwidth',default = 12.5,
-			help = 'Width of cell')
-			
-		# Define string option "--scalecells" with default value False.
-		self.arg_parser.add_argument('--scalecells',
-			action = 'store',type = inkex.Boolean,
-			dest = 'scalecells',default = False,
-			help = 'Scale cells over length')
-
-		# Define string option "--cellnumx" with default value '0.0'.
-		self.arg_parser.add_argument('--cellnumx',
-			action = 'store',type = int,
-			dest = 'cellnumx',default = 11,
-			help = 'Number of cells x')
-			
-		# Define string option "--cellnumy" with default value '0.0'.
-		self.arg_parser.add_argument('--cellnumy',
-			action = 'store',type = int,
-			dest = 'cellnumy',default = 10,
-			help = 'Number of cells y')
-			
-		# Define string option "--notchdepth" with default value '0.0'.
-		self.arg_parser.add_argument('--notchdepth',
-			action = 'store',type = float,
-			dest = 'notchdepth',default = 1.0,
-			help = 'Depth of notch')
-        
-		# Define string option "--notchwidth" with default value '0.0'.
-		self.arg_parser.add_argument('--notchwidth',
-			action = 'store',type = float,
-			dest = 'notchwidth',default = 10.0,
-			help = 'Width of notch')
-			
-		# Define string option "--notchhorizontal" with default value False.
-		self.arg_parser.add_argument('--notchhorizontal',
-			action = 'store',type = inkex.Boolean,
-			dest = 'notchhorizontal',default = False,
-			help = 'Make notches on horizontal strip')
- 
-		# Define string option "--notchvertical" with default value False.
-		self.arg_parser.add_argument('--notchvertical',
-			action = 'store',type = inkex.Boolean,
-			dest = 'notchvertical',default = False,
-			help = 'Make notches on vertical strip')
-         
-		# Define string option "--notch2depth" with default value '0.0'.
-		# self.arg_parser.add_argument('--notch2depth',
-			# action = 'store',type = float,
-			# dest = 'notch2depth',default = 10.0,
-			# help = 'Depth of notch')
-        
-		# Define string option "--notch2width" with default value '0.0'.
-		self.arg_parser.add_argument('--notch2width',
-			action = 'store',type = float,
-			dest = 'notch2width',default = 3.0,
-			help = 'Width of notch')
-
-		# Define string option "--notchxcorner" with default value False.
-		self.arg_parser.add_argument('--notchxcorner',
-			action = 'store',type = inkex.Boolean,
-			dest = 'notchxcorner',default = False,
-			help = 'Make notches on corner of horizontal strip')
- 
-		# Define string option "--notchycorner" with default value False.
-		self.arg_parser.add_argument('--notchycorner',
-			action = 'store',type = inkex.Boolean,
-			dest = 'notchycorner',default = False,
-			help = 'Make notches on corner of vertical strip')
-         
-
-			
 	def effect(self):
 		# Get access to main SVG document element and get its dimensions.
 		svg = self.document.getroot()
@@ -156,10 +68,10 @@ class GridStrip_Creator(inkex.Effect):
 		nv = self.document.xpath('/svg:svg/sodipodi:namedview',namespaces=inkex.NSS)[0]
 		
 		documentUnits = inkex.addNS('document-units', 'inkscape')
-		# print  >> sys.stderr, nv.get(documentUnits)
+		# inkex.utils.debug(nv.get(documentUnits))
 		uunits = nv.get(documentUnits)
 		message="Units="+uunits
-		# inkex.debug(message)
+		# inkex.utils.debug(message)
 
 		# Get script's options value.
 		stripwidth=self.svg.unittouu(str(self.options.width)+uunits)
@@ -194,7 +106,7 @@ class GridStrip_Creator(inkex.Effect):
 			notchycorner=False
 		
 		
-		linewidth=self.svg.unittouu(str(0.01)+uunits)
+		linewidth=self.svg.unittouu(str(0.2)+uunits)
 
 		distx=(striplength-cellnumx*cellwidth)/2	
 		disty=(striplength-cellnumy*cellheight)/2
@@ -210,29 +122,29 @@ class GridStrip_Creator(inkex.Effect):
 		# if striplength > maxlength:
 			# factor=striplength/maxlength+1
 
-		# inkex.debug("document width="+str(self.uutounit(width,uunits)))
-		# inkex.debug("document height="+str(self.uutounit(height,uunits)))
+		# inkex.utils.debug("document width="+str(self.uutounit(width,uunits)))
+		# inkex.utils.debug("document height="+str(self.uutounit(height,uunits)))
 		
-		# inkex.debug("strip length="+str(self.uutounit(striplength,uunits)))
-		# inkex.debug("strip width="+str(self.uutounit(stripwidth,uunits)))
+		# inkex.utils.debug("strip length="+str(self.uutounit(striplength,uunits)))
+		# inkex.utils.debug("strip width="+str(self.uutounit(stripwidth,uunits)))
 
-		# inkex.debug("cell width="+str(self.uutounit(cellwidth,uunits)))
-		# inkex.debug("cell height="+str(self.uutounit(cellheight,uunits)))
+		# inkex.utils.debug("cell width="+str(self.uutounit(cellwidth,uunits)))
+		# inkex.utils.debug("cell height="+str(self.uutounit(cellheight,uunits)))
 
-		# inkex.debug("Number of cells horizontal="+str(cellnumx))
-		# inkex.debug("Number of cells vertical  ="+str(cellnumy))
+		# inkex.utils.debug("Number of cells horizontal="+str(cellnumx))
+		# inkex.utils.debug("Number of cells vertical  ="+str(cellnumy))
 				
-		# inkex.debug("Depth of extra notch="+str(self.uutounit(notchdepth,uunits)))
-		# inkex.debug("Width of extra notch="+str(self.uutounit(notchwidth,uunits)))
+		# inkex.utils.debug("Depth of extra notch="+str(self.uutounit(notchdepth,uunits)))
+		# inkex.utils.debug("Width of extra notch="+str(self.uutounit(notchwidth,uunits)))
 
-		# inkex.debug("Depth of notch for grid="+str(self.uutounit(notchdepth,uunits)))
-		# inkex.debug("Width of notch for grid="+str(self.uutounit(notchwidth,uunits)))
+		# inkex.utils.debug("Depth of notch for grid="+str(self.uutounit(notchdepth,uunits)))
+		# inkex.utils.debug("Width of notch for grid="+str(self.uutounit(notchwidth,uunits)))
 
-		# inkex.debug("distx="+str(self.uutounit(distx,uunits)))
-		# inkex.debug("disty="+str(self.uutounit(disty,uunits)))
+		# inkex.utils.debug("distx="+str(self.uutounit(distx,uunits)))
+		# inkex.utils.debug("disty="+str(self.uutounit(disty,uunits)))
 
-		# inkex.debug("celldistx="+str(self.uutounit(celldistx,uunits)))
-		# inkex.debug("celldisty="+str(self.uutounit(celldisty,uunits)))
+		# inkex.utils.debug("celldistx="+str(self.uutounit(celldistx,uunits)))
+		# inkex.utils.debug("celldisty="+str(self.uutounit(celldisty,uunits)))
 		
 		
 		parent = self.svg.get_current_layer()
@@ -472,11 +384,6 @@ class GridStrip_Creator(inkex.Effect):
 								'transform': strip_transform,
 								'd':pathstring}
 			etree.SubElement(grp, inkex.addNS('path','svg'), strip_attribs )
-
-					
-if __name__ == '__main__':   #pragma: no cover
-    # Create effect instance and apply it.
-    effect = GridStrip_Creator()
-    effect.run()
-
-## end of file gridstrip_creator.py ##
+				
+if __name__ == '__main__':
+    GridStrip_Creator().run()
