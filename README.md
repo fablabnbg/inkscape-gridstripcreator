@@ -1,4 +1,4 @@
 # inkscape-gridstripcreator
-Creates grid strips for the qlocktwo 
+Creates grid strips for boxes, drawers, wordclocks
 
-Current code works with inkscape-0.91
+Current code works with inkscape version 1.2

@@ -30,11 +30,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 # These two lines are only needed if you don't put the script directly into
 # the installation directory
-import simplestyle,sys
+import sys
 sys.path.append('/usr/share/inkscape/extensions')
 
 # We will use the inkex module with the predefined Effect base class.
 import inkex
+from inkex import Effect, PathElement, Group, TextElement, Style, Layer
 
 from xml.etree import ElementTree as ET
 
@@ -46,140 +47,156 @@ def printDebug(string):
 	inkex.errormsg(_(string))
 	
 
-class GridStrip_Creator(inkex.Effect):
-	def __init__(self):
-		inkex.Effect.__init__(self)
-		"""
-		Constructor.
-		Defines options of the script.
-		"""
-		# Call the base class constructor.
-		inkex.Effect.__init__(self)
+class GridStrip_Creator(inkex.GenerateExtension):
+	container_label = 'GridstripCreator'
+	container_layer = True
 
+	def add_arguments(self,pars):
+		# inkex.Effect.__init__(self)
+		# """
+		# Constructor.
+		# Defines options of the script.
+		# """
+		# # Call the base class constructor.
+		# inkex.Effect.__init__(self)
 		# Define string option "--length" with default value '0.0'.
-		self.OptionParser.add_option('--length',
-			action = 'store',type = 'float',
+		pars.add_argument('--length',
+			type = float,
 			dest = 'length',default = 230.0,
 			help = 'Length of strip')
 			
 		# Define string option "--width" with default value '0.0'.
-		self.OptionParser.add_option('--width',
-			action = 'store',type = 'float',
+		pars.add_argument('--width',
+			type = float,
 			dest = 'width',default = 20.0,
 			help = 'Width of strip')
 
 		# Define string option "--cellheight" with default value '0.0'.
-		self.OptionParser.add_option('--cellheight',
-			action = 'store',type = 'float',
+		pars.add_argument('--cellheight',
+			type = float,
 			dest = 'cellheight',default = 12.5,
 			help = 'height of cell')
 			
 		# Define string option "--cellwidth" with default value '0.0'.
-		self.OptionParser.add_option('--cellwidth',
-			action = 'store',type = 'float',
+		pars.add_argument('--cellwidth',
+			type = float,
 			dest = 'cellwidth',default = 12.5,
 			help = 'Width of cell')
 			
 		# Define string option "--scalecells" with default value False.
-		self.OptionParser.add_option('--scalecells',
-			action = 'store',type = 'inkbool',
+		pars.add_argument('--scalecells',
+			type = inkex.Boolean,
 			dest = 'scalecells',default = False,
 			help = 'Scale cells over length')
 
 		# Define string option "--cellnumx" with default value '0.0'.
-		self.OptionParser.add_option('--cellnumx',
-			action = 'store',type = 'int',
+		pars.add_argument('--cellnumx',
+			type = int,
 			dest = 'cellnumx',default = 11,
 			help = 'Number of cells x')
 			
 		# Define string option "--cellnumy" with default value '0.0'.
-		self.OptionParser.add_option('--cellnumy',
-			action = 'store',type = 'int',
+		pars.add_argument('--cellnumy',
+			type = int,
 			dest = 'cellnumy',default = 10,
 			help = 'Number of cells y')
 			
 		# Define string option "--notchdepth" with default value '0.0'.
-		self.OptionParser.add_option('--notchdepth',
-			action = 'store',type = 'float',
+		pars.add_argument('--notchdepth',
+			type = float,
 			dest = 'notchdepth',default = 1.0,
 			help = 'Depth of notch')
         
 		# Define string option "--notchwidth" with default value '0.0'.
-		self.OptionParser.add_option('--notchwidth',
-			action = 'store',type = 'float',
+		pars.add_argument('--notchwidth',
+			type = float,
 			dest = 'notchwidth',default = 10.0,
 			help = 'Width of notch')
 			
 		# Define string option "--notchhorizontal" with default value False.
-		self.OptionParser.add_option('--notchhorizontal',
-			action = 'store',type = 'inkbool',
+		pars.add_argument('--notchhorizontal',
+			type = inkex.Boolean,
 			dest = 'notchhorizontal',default = False,
 			help = 'Make notches on horizontal strip')
  
 		# Define string option "--notchvertical" with default value False.
-		self.OptionParser.add_option('--notchvertical',
-			action = 'store',type = 'inkbool',
+		pars.add_argument('--notchvertical',
+			type = inkex.Boolean,
 			dest = 'notchvertical',default = False,
 			help = 'Make notches on vertical strip')
          
 		# Define string option "--notch2depth" with default value '0.0'.
-		# self.OptionParser.add_option('--notch2depth',
-			# action = 'store',type = 'float',
+		# pars.add_argument('--notch2depth',
+			# type = float,
 			# dest = 'notch2depth',default = 10.0,
 			# help = 'Depth of notch')
         
 		# Define string option "--notch2width" with default value '0.0'.
-		self.OptionParser.add_option('--notch2width',
-			action = 'store',type = 'float',
+		pars.add_argument('--notch2width',
+			type = float,
 			dest = 'notch2width',default = 3.0,
 			help = 'Width of notch')
 
 		# Define string option "--notchxcorner" with default value False.
-		self.OptionParser.add_option('--notchxcorner',
-			action = 'store',type = 'inkbool',
+		pars.add_argument('--notchxcorner',
+			type = inkex.Boolean,
 			dest = 'notchxcorner',default = False,
 			help = 'Make notches on corner of horizontal strip')
  
 		# Define string option "--notchycorner" with default value False.
-		self.OptionParser.add_option('--notchycorner',
-			action = 'store',type = 'inkbool',
+		pars.add_argument('--notchycorner',
+			type = inkex.Boolean,
 			dest = 'notchycorner',default = False,
 			help = 'Make notches on corner of vertical strip')
          
 
 			
-	def effect(self):
+	def generate(self):
 		# Get access to main SVG document element and get its dimensions.
-		svg = self.document.getroot()
+		svg = self.svg
+
+
+		# Get access to the current layer.
+		# svg.current_layer() returns the current layer of the document.
+		#parent = self.svg.current_layer()
+
+
 		# getting the parent tag of the guide
 		nv = self.document.xpath('/svg:svg/sodipodi:namedview',namespaces=inkex.NSS)[0]
 		
 		documentUnits = inkex.addNS('document-units', 'inkscape')
 		# print  >> sys.stderr, nv.get(documentUnits)
-		uunits = nv.get(documentUnits)
-		message="Units="+uunits
-		inkex.debug(message)
+		# uunits = nv.get(documentUnits)
+		# message="Units="+uunits
+		# inkex.utils.debug(message)
 
+		message="Option width="+str(self.options.width)
+		inkex.utils.debug(message)
+		message="Option length="+str(self.options.length)
+		inkex.utils.debug(message)
 		# Get script's options value.
-		stripwidth=self.unittouu(str(self.options.width)+uunits)
-		striplength=self.unittouu(str(self.options.length)+uunits)
-
-		cellheight=self.unittouu(str(self.options.cellheight)+uunits)
-		cellwidth=self.unittouu(str(self.options.cellwidth)+uunits)
+		stripwidth=svg.unit_to_viewport(str(self.options.width)+"mm","px")
+		striplength=svg.unit_to_viewport(str(self.options.length)+"mm","px")
+		message="strip width="+str(stripwidth)
+		inkex.utils.debug(message)
+		message="strip length="+str(striplength)
+		inkex.utils.debug(message)
+		cellheight=svg.unit_to_viewport(str(self.options.cellheight)+"mm","px")
+		cellwidth=svg.unit_to_viewport(str(self.options.cellwidth)+"mm","px")
 
 		scalecells=(self.options.scalecells)
 		
 		cellnumx=(self.options.cellnumx)
 		cellnumy=(self.options.cellnumy)
 		
-		notchdepth=self.unittouu(str(self.options.notchdepth)+uunits)
-		notchwidth=self.unittouu(str(self.options.notchwidth)+uunits)
+		notchdepth=svg.unit_to_viewport(str(self.options.notchdepth)+"mm","px")
+		notchwidth=svg.unit_to_viewport(str(self.options.notchwidth)+"mm","px")
 		
 		notchhorizontal=(self.options.notchhorizontal)
 		notchvertical=(self.options.notchvertical)
 				
-#		notch2depth=self.unittouu(str(self.options.notch2depth)+uunits)
-		notch2width=self.unittouu(str(self.options.notch2width)+uunits)
+#		notch2depth=svg.to_dimensionless(str(self.options.notch2depth)+uunits)
+		notch2width=svg.unit_to_viewport(str(self.options.notch2width)+"mm","px")
 		
 		notch2depth= stripwidth/2
 		
@@ -193,8 +210,7 @@ class GridStrip_Creator(inkex.Effect):
 			notchycorner=False
 		
 		
-		linewidth=self.unittouu(str(0.01)+uunits)
-
+		linewidth=svg.to_dimensionless(str(1))
 		distx=(striplength-cellnumx*cellwidth)/2	
 		disty=(striplength-cellnumy*cellheight)/2
 		
@@ -202,54 +218,54 @@ class GridStrip_Creator(inkex.Effect):
 		celldisty=(cellheight-notch2width)/2
 
 		# getting the width and height attributes of the canvas
-		width  = float(self.unittouu(svg.attrib['width']))
-		height = float(self.unittouu(svg.attrib['height']))
-
+		width  = float(svg.to_dimensionless(svg.attrib['width']))
+		height = float(svg.to_dimensionless(svg.attrib['height']))
 		# maxlength=max(width,height)
 		# if striplength > maxlength:
 			# factor=striplength/maxlength+1
 
-		inkex.debug("document width="+str(self.uutounit(width,uunits)))
-		inkex.debug("document height="+str(self.uutounit(height,uunits)))
+		inkex.utils.debug("document width="+str(width))
+		inkex.utils.debug("document height="+str(height))
 		
-		inkex.debug("strip length="+str(self.uutounit(striplength,uunits)))
-		inkex.debug("strip width="+str(self.uutounit(stripwidth,uunits)))
+		inkex.utils.debug("strip length="+str(striplength))
+		inkex.utils.debug("strip width="+str(stripwidth))
 
-		inkex.debug("cell width="+str(self.uutounit(cellwidth,uunits)))
-		inkex.debug("cell height="+str(self.uutounit(cellheight,uunits)))
+		inkex.utils.debug("cell width="+str(cellwidth))
+		inkex.utils.debug("cell height="+str(cellheight))
 
-		inkex.debug("Number of cells horizontal="+str(cellnumx))
-		inkex.debug("Number of cells vertical  ="+str(cellnumy))
+		inkex.utils.debug("Number of cells horizontal="+str(cellnumx))
+		inkex.utils.debug("Number of cells vertical  ="+str(cellnumy))
 				
-		inkex.debug("Depth of extra notch="+str(self.uutounit(notchdepth,uunits)))
-		inkex.debug("Width of extra notch="+str(self.uutounit(notchwidth,uunits)))
+		inkex.utils.debug("Depth of extra notch="+str(notchdepth))
+		inkex.utils.debug("Width of extra notch="+str(notchwidth))
 
-		inkex.debug("Depth of notch for grid="+str(self.uutounit(notchdepth,uunits)))
-		inkex.debug("Width of notch for grid="+str(self.uutounit(notchwidth,uunits)))
+		inkex.utils.debug("Depth of notch for grid="+str(notchdepth))
+		inkex.utils.debug("Width of notch for grid="+str(notchwidth))
 
-		inkex.debug("distx="+str(self.uutounit(distx,uunits)))
-		inkex.debug("disty="+str(self.uutounit(disty,uunits)))
+		inkex.utils.debug("distx="+str(distx))
+		inkex.utils.debug("disty="+str(disty))
 
-		inkex.debug("celldistx="+str(self.uutounit(celldistx,uunits)))
-		inkex.debug("celldisty="+str(self.uutounit(celldisty,uunits)))
+		inkex.utils.debug("celldistx="+str(celldistx))
+		inkex.utils.debug("celldisty="+str(celldisty))
 		
-		
-		parent = self.current_layer
+		parent = self.svg.get_current_layer()
+
+
+
 		layername=''
 		if notchhorizontal:
 			layername=layername+'VLED '
 		if notchvertical:
 			layername=layername+'HLED '
 		
-		# Create a new layer
-		layer = inkex.etree.SubElement(svg,'g')
-		layer.set(inkex.addNS('label', 'inkscape'),layername+'Long strips')
-		layer.set(inkex.addNS('groupmode','inkscape'), 'layer')
+
+		layer = parent.add(inkex.Layer.new(layername+'Long strips'))
+
+		grp = inkex.Group()
+		grp.set('inkscape:label','group horizontal strip long')
+		layer.add(grp)
 		
 		
-		grp_name = 'group_horizontal_strip_long'
-		grp_attribs = {inkex.addNS('label','inkscape'):grp_name}
-		grp = inkex.etree.SubElement(layer, 'g', grp_attribs) #the group to put everything in
 
 		style = { 'stroke': '#000000', 'stroke-width':str(linewidth), 'fill': 'none' }
 
@@ -278,9 +294,7 @@ class GridStrip_Creator(inkex.Effect):
 			else:
 				pathstring+=' L '+str(stripwidth)+','+str(striplength)
 			pathstring+=' L '+str(1)+','+str(striplength)							# Linke untere Ecke
-							
 
-							
 			y=striplength-distx+notch2width/2
 			
 			pathstring+=' L '+str(1)+','+str(y)					# Distance to corner
@@ -301,19 +315,27 @@ class GridStrip_Creator(inkex.Effect):
 
 			strip_transform= 'rotate(' + str(90)+')'
 			strip_transform+=' translate('+str(stripwidth*num)+','+str(1)+')'
-			strip_attribs = {'style':simplestyle.formatStyle(style),
-								inkex.addNS('label','inkscape'):"strip horizontal long",
-								'transform': strip_transform,
-								'd':pathstring}
-			inkex.etree.SubElement(grp, inkex.addNS('path','svg'), strip_attribs )
+
+			pathstring = inkex.PathElement(d=pathstring)
+			pathstring.set('style',style)
+			pathstring.set('inkscape:label',"strip horizontal long"+str(num))
+			pathstring.set('transform', strip_transform)
+			# strip_attribs = {'style':mystyle,
+			# 					inkex.addNS('label','inkscape'):"strip horizontal long",
+			# 					'transform': strip_transform,
+			# 					'd':pathstring}
+			
+
+			grp.add(pathstring)
 		
 		
 		celldisty=(cellheight-notch2width-notchwidth)/2
 
 		grp_name = 'group_vertical_strip_long'
-		grp_attribs = {inkex.addNS('label','inkscape'):grp_name}
-		grp = inkex.etree.SubElement(layer, 'g', grp_attribs) #the group to put everything in
-		
+
+		grp = inkex.Group()
+		grp.set('inkscape:label',grp_name)
+		layer.add(grp)
 
 		for num in range(0,2):
 			y=disty-notch2width/2
@@ -353,20 +375,21 @@ class GridStrip_Creator(inkex.Effect):
 			pathstring+=' L '+str(1)+','+str(1)+' z'
 			
 			strip_transform= 'translate('+str(num*stripwidth)+','+str(1)+')'
-			strip_attribs = {'style':simplestyle.formatStyle(style),
-								inkex.addNS('label','inkscape'):"strip vertical long",
-								'transform': strip_transform,
-								'd':pathstring}
-			inkex.etree.SubElement(grp, inkex.addNS('path','svg'), strip_attribs )
-		
-		# Create a new layer
-		layer = inkex.etree.SubElement(svg,'g')
-		layer.set(inkex.addNS('label', 'inkscape'), layername+'Horizontal strips short')
-		layer.set(inkex.addNS('groupmode','inkscape'), 'layer')
+			pathstring = inkex.PathElement(d=pathstring)
+			pathstring.set('style',style)
+			pathstring.set('inkscape:label',"strip vertical long "+str(num))
+			pathstring.set('transform', strip_transform)
+			grp.add(pathstring)
+		yield layer
+
+
+		layer = parent.add(inkex.Layer.new(layername+'Horizontal strips short'))
 
 		grp_name = 'group horizontal_strip_short'
-		grp_attribs = {inkex.addNS('label','inkscape'):grp_name}
-		grp = inkex.etree.SubElement(layer, 'g', grp_attribs) #the group to put everything in
+		grp = inkex.Group()
+		grp.set('inkscape:label',grp_name)
+		layer.add(grp)
+		
 		striplength=cellnumx*cellwidth+4*notch2width
 		distx=(striplength-cellnumx*cellwidth)/2	
 		disty=(striplength-cellnumy*cellheight)/2
@@ -409,22 +432,21 @@ class GridStrip_Creator(inkex.Effect):
 
 			strip_transform='rotate(' + str(90)+')'
 			strip_transform+=' translate('+str((num+1)*stripwidth+2)+','+str(1)+')'
-			stripname="strip horizontal short"+str(num)
-			strip_attribs = {'style':simplestyle.formatStyle(style),
-								inkex.addNS('label','inkscape'):stripname,
-								'transform': strip_transform,
-								'd':pathstring}
-			inkex.etree.SubElement(grp, inkex.addNS('path','svg'), strip_attribs )
 
+			stripname="strip horizontal short "+str(num)
+			pathstring = inkex.PathElement(d=pathstring)
+			pathstring.set('style',style)
+			pathstring.set('inkscape:label',stripname)
+			pathstring.set('transform', strip_transform)
+			grp.add(pathstring)
+		yield layer	
 			
-		# Create a new layer
-		layer = inkex.etree.SubElement(svg,'g')
-		layer.set(inkex.addNS('label', 'inkscape'), layername+'Vertical strips short')
-		layer.set(inkex.addNS('groupmode','inkscape'), 'layer')
+		layer = parent.add(inkex.Layer.new(layername+'Vertical strips short'))
 
 		grp_name = 'group vertical_strip_short'
-		grp_attribs = {inkex.addNS('label','inkscape'):grp_name}
-		grp = inkex.etree.SubElement(layer, 'g', grp_attribs) #the group to put everything in
+		grp = inkex.Group()
+		grp.set('inkscape:label',grp_name)
+		layer.add(grp)
 		
 		striplength=cellnumx*cellwidth+4*notch2width
 		distx=(striplength-cellnumx*cellwidth)/2	
@@ -465,17 +487,18 @@ class GridStrip_Creator(inkex.Effect):
 			
 			
 			strip_transform= 'translate('+str((num+1)*stripwidth+10)+','+str(1)+')'
-			stripname="strip vertical short"+str(num)
-			strip_attribs = {'style':simplestyle.formatStyle(style),
-								inkex.addNS('label','inkscape'):stripname,
-								'transform': strip_transform,
-								'd':pathstring}
-			inkex.etree.SubElement(grp, inkex.addNS('path','svg'), strip_attribs )
+			stripname="strip vertical short "+str(num)
+			pathstring = inkex.PathElement(d=pathstring)
+			pathstring.set('style',style)
+			pathstring.set('inkscape:label',stripname)
+			pathstring.set('transform', strip_transform)
+			grp.add(pathstring)
+		yield layer	
 
 					
 if __name__ == '__main__':   #pragma: no cover
     # Create effect instance and apply it.
-    effect = GridStrip_Creator()
-    effect.affect()
+    GridStrip_Creator().run()
+    
 
 ## end of file gridstrip_creator.py ##
