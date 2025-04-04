@@ -3,7 +3,7 @@
 Grid Strip Creator  v1.0 (30/11/2014)
 
 
-Copyright (C) 2014 Thomas Gebert - tsgebert **AT** web.de
+Copyright (C) 2025 Thomas Gebert - tsgebert **AT** web.de
 
 ## This basic extension allows you to automatically draw guides in inkscape for hexagons.
 
