@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 '''
-Grid Strip Creator  v1.0 (30/11/2014)
+Grid Strip Creator  v1.4 (05/04/2025)
 
 
 Copyright (C) 2025 Thomas Gebert - tsgebert **AT** web.de
@@ -175,28 +175,31 @@ class GridStrip_Creator(inkex.GenerateExtension):
 		message="Option length="+str(self.options.length)
 		inkex.utils.debug(message)
 		# Get script's options value.
-		stripwidth=svg.unit_to_viewport(str(self.options.width)+"mm","px")
-		striplength=svg.unit_to_viewport(str(self.options.length)+"mm","px")
-		message="strip width="+str(stripwidth)
-		inkex.utils.debug(message)
-		message="strip length="+str(striplength)
-		inkex.utils.debug(message)
-		cellheight=svg.unit_to_viewport(str(self.options.cellheight)+"mm","px")
-		cellwidth=svg.unit_to_viewport(str(self.options.cellwidth)+"mm","px")
+		# stripwidth=svg.unit_to_viewport(str(self.options.width)+"mm","px")
+		# striplength=svg.unit_to_viewport(str(self.options.length)+"mm","px")
+		stripwidth=self.options.width
+		striplength=self.options.length
+		# cellheight=svg.unit_to_viewport(str(self.options.cellheight)+"mm","px")
+		# cellwidth=svg.unit_to_viewport(str(self.options.cellwidth)+"mm","px")
+		cellheight=self.options.cellheight
+		cellwidth=self.options.cellwidth
 
 		scalecells=(self.options.scalecells)
 		
 		cellnumx=(self.options.cellnumx)
 		cellnumy=(self.options.cellnumy)
 		
-		notchdepth=svg.unit_to_viewport(str(self.options.notchdepth)+"mm","px")
-		notchwidth=svg.unit_to_viewport(str(self.options.notchwidth)+"mm","px")
+		# notchdepth=svg.unit_to_viewport(str(self.options.notchdepth)+"mm","px")
+		# notchwidth=svg.unit_to_viewport(str(self.options.notchwidth)+"mm","px")
+		notchdepth=self.options.notchdepth
+		notchwidth=self.options.notchwidth
 		
 		notchhorizontal=(self.options.notchhorizontal)
 		notchvertical=(self.options.notchvertical)
 				
 #		notch2depth=svg.to_dimensionless(str(self.options.notch2depth)+uunits)
-		notch2width=svg.unit_to_viewport(str(self.options.notch2width)+"mm","px")
+		# notch2width=svg.unit_to_viewport(str(self.options.notch2width)+"mm","px")
+		notch2width=self.options.notch2width
 		
 		notch2depth= stripwidth/2
 		
