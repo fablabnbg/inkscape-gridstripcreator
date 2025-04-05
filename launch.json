@@ -1,0 +1,49 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Python Debugger: Current File with Arguments",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "--length",
+                "230.0",
+                "--width",
+                "20.0",
+                "--cellheight",
+                "12.5",
+                "--cellwidth",
+                "12.5",
+                "--scalecells",
+                "False",
+                "--cellnumx",
+                "11",
+                "--cellnumy",
+                "10",
+                "--notchdepth",
+                "1.0",
+                "--notchwidth",
+                "10.0",
+                "--notchhorizontal",
+                "False",
+                "--notchvertical",
+                "False",
+                "--notch2width",
+                "3.0",
+                "--notchxcorner",
+                "True",
+                "--notchycorner",
+                "True",
+                "--output",
+                "/tmp/gridsrtipcreator_output.svg",
+                "/usr/share/inkscape/templates/default.de.svg"                
+            ]
+        }
+    ]
+}
