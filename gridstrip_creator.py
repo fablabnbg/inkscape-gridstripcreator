@@ -45,7 +45,6 @@ _ = gettext.gettext
 
 def printDebug(string):
 	inkex.errormsg(_(string))
-	
 
 class GridStrip_Creator(inkex.GenerateExtension):
 	container_label = 'GridstripCreator'
@@ -164,16 +163,14 @@ class GridStrip_Creator(inkex.GenerateExtension):
 		# getting the parent tag of the guide
 		nv = self.document.xpath('/svg:svg/sodipodi:namedview',namespaces=inkex.NSS)[0]
 		
-		documentUnits = inkex.addNS('document-units', 'inkscape')
-		# print  >> sys.stderr, nv.get(documentUnits)
-		# uunits = nv.get(documentUnits)
+		uunits = nv.get('inkscape:document-units')
 		# message="Units="+uunits
 		# inkex.utils.debug(message)
 
-		message="Option width="+str(self.options.width)
-		inkex.utils.debug(message)
-		message="Option length="+str(self.options.length)
-		inkex.utils.debug(message)
+		# message="Option width="+str(self.options.width)
+		# inkex.utils.debug(message)
+		# message="Option length="+str(self.options.length)
+		# inkex.utils.debug(message)
 		# Get script's options value.
 		# stripwidth=svg.unit_to_viewport(str(self.options.width)+"mm","px")
 		# striplength=svg.unit_to_viewport(str(self.options.length)+"mm","px")
@@ -227,29 +224,29 @@ class GridStrip_Creator(inkex.GenerateExtension):
 		# if striplength > maxlength:
 			# factor=striplength/maxlength+1
 
-		inkex.utils.debug("document width="+str(width))
-		inkex.utils.debug("document height="+str(height))
+		# inkex.utils.debug("document width="+str(width))
+		# inkex.utils.debug("document height="+str(height))
 		
-		inkex.utils.debug("strip length="+str(striplength))
-		inkex.utils.debug("strip width="+str(stripwidth))
+		# inkex.utils.debug("strip length="+str(striplength))
+		# inkex.utils.debug("strip width="+str(stripwidth))
 
-		inkex.utils.debug("cell width="+str(cellwidth))
-		inkex.utils.debug("cell height="+str(cellheight))
+		# inkex.utils.debug("cell width="+str(cellwidth))
+		# inkex.utils.debug("cell height="+str(cellheight))
 
-		inkex.utils.debug("Number of cells horizontal="+str(cellnumx))
-		inkex.utils.debug("Number of cells vertical  ="+str(cellnumy))
+		# inkex.utils.debug("Number of cells horizontal="+str(cellnumx))
+		# inkex.utils.debug("Number of cells vertical  ="+str(cellnumy))
 				
-		inkex.utils.debug("Depth of extra notch="+str(notchdepth))
-		inkex.utils.debug("Width of extra notch="+str(notchwidth))
+		# inkex.utils.debug("Depth of extra notch="+str(notchdepth))
+		# inkex.utils.debug("Width of extra notch="+str(notchwidth))
 
-		inkex.utils.debug("Depth of notch for grid="+str(notchdepth))
-		inkex.utils.debug("Width of notch for grid="+str(notchwidth))
+		# inkex.utils.debug("Depth of notch for grid="+str(notchdepth))
+		# inkex.utils.debug("Width of notch for grid="+str(notchwidth))
 
-		inkex.utils.debug("distx="+str(distx))
-		inkex.utils.debug("disty="+str(disty))
+		# inkex.utils.debug("distx="+str(distx))
+		# inkex.utils.debug("disty="+str(disty))
 
-		inkex.utils.debug("celldistx="+str(celldistx))
-		inkex.utils.debug("celldisty="+str(celldisty))
+		# inkex.utils.debug("celldistx="+str(celldistx))
+		# inkex.utils.debug("celldisty="+str(celldisty))
 		
 		parent = self.svg.get_current_layer()
 
